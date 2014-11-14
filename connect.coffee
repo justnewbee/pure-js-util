@@ -5,8 +5,7 @@ connect = (obj, event, context, method) ->
 	
 	eventMethod = obj[event]
 	
-	if obj == context && method == eventMethod
-		return
+	return if obj == context and method == eventMethod
 	
 	if eventMethod.__connections__
 		eventMethod.__connections__.push
@@ -14,17 +13,17 @@ connect = (obj, event, context, method) ->
 			method: method
 	else
 		newFunc = () ->
-			listeners = arguments.callee.__connections__;
+			listeners = arguments.callee.__connections__
 			
 			v.method.apply v.context, arguments for v in listeners when v
 		
-		newFunc.__connections__ = [{
-			context: obj,
+		newFunc.__connections__ = [
+			context: obj
 			method: eventMethod
-		}, {
-			context: context,
+		,
+			context: context
 			method: method
-		}];
+		]
 		
 		obj[event] = newFunc
 
